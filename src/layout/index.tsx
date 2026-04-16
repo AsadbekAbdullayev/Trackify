@@ -1,135 +1,170 @@
-import { useState } from 'react';
-import { Layout, Menu, Button, Popconfirm, Popover, Avatar } from 'antd';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { RootState } from '@/redux/store/store';
 import Trackify from '@/logos/trackify.png';
 import { useSelector } from 'react-redux';
 import {
-	PieChartOutlined,
-	DollarOutlined,
-	LogoutOutlined,
-	MenuFoldOutlined,
-	MenuUnfoldOutlined,
-	UserOutlined,
-} from '@ant-design/icons';
-
-const { Sider, Header } = Layout;
+	ChartPie,
+	ChevronLeft,
+	ChevronRight,
+	KanbanSquare,
+	LogOut,
+	Menu,
+	MoonStar,
+	SunMedium,
+	User,
+} from 'lucide-react';
 
 const AppLayout = () => {
 	const { userDetails } = useSelector((state: RootState) => state.generel);
 	const [collapsed, setCollapsed] = useState(false);
+	const [profileOpen, setProfileOpen] = useState(false);
+	const [darkMode, setDarkMode] = useState(false);
 	const { name, photoURL } = userDetails;
 	const navigate = useNavigate();
 	const location = useLocation();
 
+	useEffect(() => {
+		const savedTheme = localStorage.getItem('theme');
+		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		const shouldUseDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+		setDarkMode(shouldUseDark);
+		document.documentElement.classList.toggle('dark', shouldUseDark);
+	}, []);
+
+	const handleThemeToggle = () => {
+		setDarkMode((prev) => {
+			const next = !prev;
+			document.documentElement.classList.toggle('dark', next);
+			localStorage.setItem('theme', next ? 'dark' : 'light');
+			return next;
+		});
+	};
+
 	const handleMenu = (key: string) => {
 		if (key === 'logout') {
-			localStorage.removeItem('auth');
+			localStorage.removeItem('user_uid');
 			navigate('/');
 		} else {
 			navigate(`/${key}`);
 		}
 	};
 
-	const AdminContent = (
-		<div>
-			<Menu
-				mode="inline"
-				items={[
-					{
-						key: 'logout',
-						icon: <LogoutOutlined style={{ color: 'red' }} />,
-						label: (
-							<Popconfirm
-								title="Are you sure you want to logout?"
-								onConfirm={() => handleMenu('logout')}
-								okText="Yes"
-								cancelText="No"
-								className="text-red-500"
-							>
-								Logout
-							</Popconfirm>
-						),
-					},
-				]}
-			/>
-		</div>
-	);
-
 	const menuItems = [
 		{
 			key: 'dashboard',
-			icon: <PieChartOutlined />,
+			icon: <ChartPie className="h-4 w-4 shrink-0" />,
 			label: 'Dashboard',
 		},
 		{
 			key: 'ticket',
-			icon: <DollarOutlined />,
+			icon: <KanbanSquare className="h-4 w-4 shrink-0" />,
 			label: 'My Ticket',
 		},
 	];
 
 	return (
-		<Layout style={{ minHeight: '100vh' }}>
-			<Sider
-				theme={'dark'}
-				collapsible
-				collapsed={collapsed}
-				breakpoint="md"
-				style={{ borderRight: '1px solid #eaeaea' }}
-				onCollapse={(value) => setCollapsed(value)}
+		<div className="flex min-h-screen bg-background text-text-primary">
+			<aside
+				className={`${
+					collapsed ? 'w-[60px]' : 'w-64'
+				} border-r border-border bg-surface px-3 py-4 transition-all duration-300`}
 			>
-				<div className="w-full flex items-center justify-center py-9 relative">
-					<img src={Trackify} alt="logo" className="w-[200px] absolute" />
-				</div>
-
-				{/* Filtered nested Menu */}
-				<Menu
-					theme={'dark'}
-					mode="inline"
-					selectedKeys={[location.pathname.replace('/', '')]}
-					onClick={(e) => handleMenu(e.key)}
-					items={menuItems}
-				/>
-			</Sider>
-
-			<Layout>
-				<Header className="bg-[#001529] flex justify-end items-center px-4 shadow-sm">
-					<Button
-						type="text"
-						icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-						onClick={() => setCollapsed(!collapsed)}
-						className="md:hidden"
+				<div className="mb-6 flex items-center justify-between">
+					<img
+						src={Trackify}
+						alt="logo"
+						className={`${collapsed ? 'w-8' : 'w-28'} transition-all duration-300`}
 					/>
-					<div className="flex items-center gap-5 pr-5">
-						<Popover
-							content={AdminContent}
-							trigger="click"
-							placement="bottomRight"
+					<button
+						onClick={() => setCollapsed((prev) => !prev)}
+						className="hidden h-9 w-9 items-center justify-center rounded-xl text-text-secondary hover:bg-surface-elevated md:flex"
+					>
+						{collapsed ? (
+							<ChevronRight className="h-4 w-4" />
+						) : (
+							<ChevronLeft className="h-4 w-4" />
+						)}
+					</button>
+				</div>
+				<nav className="space-y-1">
+					{menuItems.map((item) => {
+						const isActive = location.pathname.startsWith(`/${item.key}`);
+						return (
+							<button
+								key={item.key}
+								onClick={() => handleMenu(item.key)}
+								className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+									isActive
+										? 'bg-accent-light text-accent'
+										: 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
+								}`}
+							>
+								{item.icon}
+								{!collapsed && <span>{item.label}</span>}
+							</button>
+						);
+					})}
+				</nav>
+			</aside>
+			<div className="flex flex-1 flex-col">
+				<header className="flex h-16 items-center justify-between border-b border-border bg-surface px-6">
+					<button
+						onClick={() => setCollapsed((prev) => !prev)}
+						className="flex h-9 w-9 items-center justify-center rounded-xl text-text-secondary hover:bg-surface-elevated md:hidden"
+					>
+						<Menu className="h-4 w-4" />
+					</button>
+					<div className="ml-auto flex items-center gap-2">
+						<button
+							onClick={handleThemeToggle}
+							className="flex h-9 w-9 items-center justify-center rounded-xl text-text-secondary hover:bg-surface-elevated transition-colors"
 						>
-							<div className="flex items-center pr-1 justify-center gap-2 cursor-pointer text-white">
-								{photoURL ? (
-									<Avatar size={40} src={photoURL} icon={<UserOutlined />} />
-								) : (
-									<div className="w-[40px] h-[40px] p-1 rounded-full border flex items-center justify-center">
-										<UserOutlined className="text-[20px] " />
-									</div>
-								)}
-								{name ? (
-									<span className="text-lg font-semibold">{`${name}`}</span>
-								) : (
-									<span className="text-lg font-semibold">Admin</span>
-								)}
+							{darkMode ? (
+								<SunMedium className="h-4 w-4" />
+							) : (
+								<MoonStar className="h-4 w-4" />
+							)}
+						</button>
+						<div className="relative">
+						<button
+							onClick={() => setProfileOpen((prev) => !prev)}
+							className="flex items-center gap-2 rounded-full border border-border bg-surface px-2 py-1 hover:bg-surface-elevated"
+						>
+							{photoURL ? (
+								<img
+									src={photoURL}
+									alt="user"
+									className="h-8 w-8 rounded-full object-cover"
+								/>
+							) : (
+								<div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-light">
+									<User className="h-4 w-4 text-accent" />
+								</div>
+							)}
+							<span className="text-sm font-medium text-text-primary">
+								{name || 'Admin'}
+							</span>
+						</button>
+						{profileOpen && (
+							<div className="absolute right-0 top-full z-50 mt-1 min-w-[160px] animate-fade-in rounded-xl border border-border bg-surface p-1 shadow-elevated">
+								<button
+									onClick={() => handleMenu('logout')}
+									className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-danger hover:bg-surface-elevated transition-colors"
+								>
+									<LogOut className="h-4 w-4" />
+									Logout
+								</button>
 							</div>
-						</Popover>
+						)}
+						</div>
 					</div>
-				</Header>
-
-				<div className="overflow-auto w-full max-h-[calc(100v-200px)] bg-[#e0f7fa]">
+				</header>
+				<div className="min-h-0 flex-1 overflow-auto bg-background px-6 py-4">
 					<Outlet />
 				</div>
-			</Layout>
-		</Layout>
+			</div>
+		</div>
 	);
 };
 

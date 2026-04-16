@@ -1,18 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+	--color-background: #f7f8fc;
+	--color-surface: #ffffff;
+	--color-surface-elevated: #f1f3fb;
+	--color-border: #e5e7ef;
+	--color-text-primary: #111827;
+	--color-text-secondary: #4b5563;
+	--color-text-muted: #9ca3af;
+	--color-accent: #6366f1;
+	--color-accent-hover: #5458e8;
+	--color-accent-light: #e7e9ff;
+	--color-danger: #ef4444;
+	--color-success: #22c55e;
+	--color-warning: #f59e0b;
+}
+
+html.dark {
+	--color-background: #0f111a;
+	--color-surface: #151926;
+	--color-surface-elevated: #1c2233;
+	--color-border: #2a3348;
+	--color-text-primary: #f3f4f6;
+	--color-text-secondary: #d1d5db;
+	--color-text-muted: #94a3b8;
+	--color-accent: #818cf8;
+	--color-accent-hover: #7280ff;
+	--color-accent-light: rgba(129, 140, 248, 0.2);
+	--color-danger: #f87171;
+	--color-success: #4ade80;
+	--color-warning: #fbbf24;
+}
 
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	font-family: 'Inter', sans-serif;
-	transition:
-		background-color 0.3s ease,
-		border-color 0.3s ease,
-		color 0.3s ease;
+	font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+		box-shadow 0.2s ease;
 }
 
 body {
-	background-color: #f6f8fa;
+	background-color: var(--color-background);
+	color: var(--color-text-primary);
+	font-size: 14px;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+	outline: none;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--color-surface);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--color-border);
+	border-radius: 999px;
 }

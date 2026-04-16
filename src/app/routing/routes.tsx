@@ -11,7 +11,7 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
-				{/* Login sahifasi */}
+				{/* Login page */}
 				<Route path="/login" element={<Login />} />
 				<Route path="" element={<Home />} />
 
@@ -19,7 +19,7 @@ function App() {
 					path="/"
 					element={
 						<PrivateRoute>
-							<AppLayout /> {/* Asosiy layout (sidebar, topbar) */}
+							<AppLayout /> {/* Main layout (sidebar, topbar) */}
 						</PrivateRoute>
 					}
 				>

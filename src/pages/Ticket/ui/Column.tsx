@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDrop } from 'react-dnd';
-import { Ticket, TicketStatus } from '@/constants/types';
+import { TicketStatus } from '@/constants/types';
 
 interface ColumnProps {
 	status: TicketStatus;
@@ -20,10 +20,14 @@ const Column: React.FC<ColumnProps> = ({ status, onDrop, children }) => {
 	return (
 		<div
 			ref={divRef}
-			className="w-full md:w-1/5 bg-gray-100 p-4 rounded-md min-h-[300px]"
+			className="w-full rounded-2xl border border-border bg-surface p-4 shadow-card md:w-1/4"
 		>
-			<h2 className="text-lg font-semibold mb-2 capitalize">{status}</h2>
-			{children}
+			<div className="mb-3 flex items-center justify-between">
+				<h2 className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+					{status}
+				</h2>
+			</div>
+			<div className="space-y-2">{children}</div>
 		</div>
 	);
 };

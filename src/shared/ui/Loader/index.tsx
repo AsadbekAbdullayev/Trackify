@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spin } from 'antd';
+import { Loader2 } from 'lucide-react';
 
 interface LoaderProps {
 	size?: number;
@@ -7,8 +7,10 @@ interface LoaderProps {
 
 const Loader: React.FC<LoaderProps> = () => {
 	return (
-		<div className={`w-full h-screen flex items-center justify-center `}>
-			<Spin size="large" />
+		<div className="flex h-screen w-full items-center justify-center bg-background">
+			<div className="rounded-2xl border border-border bg-surface p-6 shadow-card">
+				<Loader2 className="h-8 w-8 animate-spin text-accent" />
+			</div>
 		</div>
 	);
 };
